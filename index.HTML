@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daksh — Web Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0b0b0d;
+      --bg2:       #111115;
+      --bg3:       #18181e;
+      --border:    #222228;
+      --accent:    #c8f542;      /* electric lime */
+      --accent2:   #3dffd0;      /* cyan pop */
+      --text:      #e8e8ea;
+      --muted:     #7a7a88;
+      --white:     #ffffff;
+      --r:         12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ──── SCROLLBAR ──── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+    /* ──── NOISE OVERLAY ──── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.022;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ──── NAV ──── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 6vw;
+      background: rgba(11,11,13,0.75);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.2rem;
+      color: var(--white); letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #0b0b0d;
+      padding: 0.5rem 1.25rem; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 600; text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: 0.3s; }
+    .mobile-menu {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--bg); z-index: 99; flex-direction: column;
+      align-items: center; justify-content: center; gap: 2rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 700;
+      color: var(--text); text-decoration: none; transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--accent); }
+    .mobile-close {
+      position: absolute; top: 1.5rem; right: 6vw;
+      background: none; border: none; color: var(--text);
+      font-size: 1.8rem; cursor: pointer;
+    }
+
+    /* ──── SECTION WRAPPER ──── */
+    section { padding: 6rem 6vw; }
+    .label {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 1.25rem;
+    }
+    .label::before {
+      content: ''; display: block; width: 18px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* ──── HERO ──── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding-top: 7rem; padding-bottom: 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute; top: -20%; right: -10%;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(200,245,66,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute; bottom: -15%; left: -5%;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(61,255,208,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 0.35rem 1rem; border-radius: 50px;
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 2rem;
+      width: fit-content;
+    }
+    .hero-badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .hero-headline {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.03em; color: var(--white);
+      margin-bottom: 1.5rem;
+    }
+    .hero-headline .line2 { color: var(--accent); }
+    .hero-tagline {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted); max-width: 520px;
+      font-weight: 300; margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #0b0b0d;
+      padding: 0.8rem 2rem; border-radius: 50px;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(200,245,66,0.2);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 45px rgba(200,245,66,0.35); }
+    .btn-ghost {
+      border: 1px solid var(--border); color: var(--text);
+      padding: 0.8rem 2rem; border-radius: 50px;
+      font-weight: 500; font-size: 0.95rem; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 6vw;
+      display: flex; align-items: center; gap: 0.6rem;
+      color: var(--muted); font-size: 0.78rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .hero-scroll-line {
+      width: 40px; height: 1px; background: var(--muted);
+      animation: scrollline 2s ease-in-out infinite;
+    }
+    @keyframes scrollline {
+      0%, 100% { width: 40px; opacity: 1; }
+      50% { width: 20px; opacity: 0.4; }
+    }
+    .stats-row {
+      display: flex; gap: 3rem; margin-top: 3.5rem; flex-wrap: wrap;
+    }
+    .stat-item .num {
+      font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800;
+      color: var(--white); line-height: 1;
+    }
+    .stat-item .num span { color: var(--accent); }
+    .stat-item .desc { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ──── ABOUT ──── */
+    #about { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-illus {
+      width: 100%; position: relative;
+    }
+    .about-illus svg {
+      width: 100%; height: auto; display: block;
+    }
+    /* floating badge animations */
+    @keyframes floatA {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-8px); }
+    }
+    @keyframes floatB {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-6px); }
+    }
+    @keyframes floatC {
+      0%,100% { transform: translateY(0px); }
+      50%      { transform: translateY(-10px); }
+    }
+    @keyframes typeLine {
+      0%   { width: 0; }
+      60%  { width: 100%; }
+      100% { width: 100%; }
+    }
+    @keyframes cursorBlink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+    @keyframes barGrow {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .badge-float-a { animation: floatA 3.8s ease-in-out infinite; }
+    .badge-float-b { animation: floatB 4.5s ease-in-out infinite 0.7s; }
+    .badge-float-c { animation: floatC 3.2s ease-in-out infinite 1.3s; }
+    .about-heading {
+      font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800; line-height: 1.15; color: var(--white); margin-bottom: 1.2rem;
+    }
+    .about-text { color: var(--muted); margin-bottom: 1rem; line-height: 1.8; }
+    .skill-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+    .chip {
+      padding: 0.35rem 0.9rem; border: 1px solid var(--border);
+      border-radius: 50px; font-size: 0.78rem; color: var(--muted);
+      background: var(--bg3); transition: 0.2s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ──── WORK ──── */
+    #work { }
+    .work-intro {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end;
+      margin-bottom: 3.5rem;
+    }
+    .work-heading {
+      font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--white); line-height: 1.1;
+    }
+    .work-sub { color: var(--muted); font-size: 1rem; line-height: 1.8; }
+    .process-steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .step-card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 1.75rem;
+      position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .step-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .step-num {
+      font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800;
+      color: var(--border); line-height: 1; margin-bottom: 1rem;
+      transition: color 0.25s;
+    }
+    .step-card:hover .step-num { color: var(--accent); }
+    .step-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; }
+    .step-desc { font-size: 0.875rem; color: var(--muted); }
+
+    /* ──── SERVICES / SITE TYPES ──── */
+    #services { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .services-heading {
+      font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--white); line-height: 1.1;
+      max-width: 600px; margin-bottom: 0.75rem;
+    }
+    .services-sub { color: var(--muted); max-width: 540px; margin-bottom: 3.5rem; }
+    /* Who section */
+    .who-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem; margin-bottom: 5rem;
+    }
+    .who-card {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2rem;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative; overflow: hidden;
+    }
+    .who-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s;
+    }
+    .who-card:hover { border-color: rgba(200,245,66,0.3); transform: translateY(-4px); }
+    .who-card:hover::after { transform: scaleX(1); }
+    .who-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--bg2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; margin-bottom: 1.25rem;
+    }
+    .who-title { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; font-size: 1.1rem; }
+    .who-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.75; }
+    .who-tag {
+      display: inline-block; margin-top: 1rem;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+      color: var(--accent); text-transform: uppercase;
+    }
+    /* Types of sites */
+    .types-label { margin-bottom: 2rem; }
+    .types-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+    .type-card {
+      border: 1px solid var(--border); border-radius: var(--r);
+      overflow: hidden; transition: border-color 0.25s, transform 0.25s;
+      background: var(--bg);
+    }
+    .type-card:hover { border-color: var(--accent2); transform: translateY(-4px); }
+    .type-visual {
+      height: 160px; display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    /* unique visual per card */
+    .tv-landing { background: linear-gradient(135deg, #0f0f14 60%, #1a1f10 100%); }
+    .tv-landing .mock {
+      width: 120px; height: 90px; border-radius: 6px;
+      background: #1a1f10; border: 1px solid #2a2f1a;
+      display: flex; flex-direction: column; padding: 8px; gap: 5px;
+    }
+    .tv-landing .mock-bar { height: 5px; border-radius: 3px; background: var(--accent); width: 70%; }
+    .tv-landing .mock-bar.sm { width: 50%; background: #3a3f2a; }
+    .tv-landing .mock-btn { height: 14px; width: 40%; border-radius: 3px; background: var(--accent); margin-top: 4px; }
+
+    .tv-portfolio { background: linear-gradient(135deg, #0f1214 60%, #101a1f 100%); }
+    .tv-portfolio .grid-mock {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 120px;
+    }
+    .tv-portfolio .gm-cell {
+      height: 50px; border-radius: 4px; background: #1a2328; border: 1px solid #1f2f35;
+    }
+    .tv-portfolio .gm-cell:nth-child(1) { border-color: var(--accent2); }
+
+    .tv-blog { background: linear-gradient(135deg, #130f0f 60%, #1f1414 100%); }
+    .tv-blog .blog-mock {
+      width: 120px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .tv-blog .bm-row { height: 6px; border-radius: 3px; background: #2a1f1f; }
+    .tv-blog .bm-row.accent { background: #e05252; width: 60%; }
+    .tv-blog .bm-img { height: 50px; border-radius: 4px; background: #2a1f1f; }
+
+    .tv-ecomm { background: linear-gradient(135deg, #0f0f17 60%, #13101f 100%); }
+    .tv-ecomm .shop-mock {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; width: 130px;
+    }
+    .tv-ecomm .sm-card { border-radius: 4px; background: #1e1a2e; height: 50px; border: 1px solid #2a2545; }
+    .tv-ecomm .sm-card:first-child { border-color: #a07fff; }
+
+    .tv-service { background: linear-gradient(135deg, #0f1410 60%, #101f12 100%); }
+    .tv-service .svc-mock {
+      width: 120px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .tv-service .svc-icon-row { display: flex; gap: 6px; }
+    .tv-service .svc-icon { width: 28px; height: 28px; border-radius: 6px; background: #1e2e1f; border: 1px solid #2a4a2c; }
+    .tv-service .svc-icon:first-child { border-color: #5aee6a; }
+    .tv-service .svc-bar { height: 5px; border-radius: 3px; background: #1e2e1f; }
+    .tv-service .svc-bar.g { background: #5aee6a; width: 65%; }
+
+    .tv-booking { background: linear-gradient(135deg, #14100f 60%, #1f180f 100%); }
+    .tv-booking .cal-mock {
+      width: 110px;
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+    }
+    .tv-booking .cal-day { height: 12px; border-radius: 2px; background: #2a2015; }
+    .tv-booking .cal-day.on { background: #f59a23; }
+    .tv-booking .cal-day.sel { background: #fff; }
+
+    .type-info { padding: 1.25rem 1.5rem; }
+    .type-name { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--white); margin-bottom: 0.3rem; }
+    .type-desc { font-size: 0.82rem; color: var(--muted); }
+
+    /* ──── CONTACT ──── */
+    #contact { }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start;
+    }
+    .contact-heading {
+      font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800; color: var(--white); line-height: 1.1; margin-bottom: 1rem;
+    }
+    .contact-text { color: var(--muted); margin-bottom: 2rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 0.75rem;
+      color: var(--muted); font-size: 0.9rem; text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-link:hover { color: var(--accent); }
+    .contact-link-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .form-wrap {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 2.5rem;
+    }
+    .form-row { margin-bottom: 1.25rem; }
+    .form-row label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 0.5rem;
+    }
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      width: 100%; background: var(--bg3);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 0.75rem 1rem; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-row input::placeholder,
+    .form-row textarea::placeholder { color: #454550; }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus { border-color: var(--accent); }
+    .form-row textarea { resize: vertical; min-height: 120px; }
+    .form-row select { cursor: pointer; }
+    .form-row select option { background: var(--bg3); }
+    .form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-submit {
+      width: 100%; padding: 0.9rem;
+      background: var(--accent); color: #0b0b0d;
+      border: none; border-radius: 50px; font-family: 'Syne', sans-serif;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s, transform 0.2s;
+      box-shadow: 0 0 30px rgba(200,245,66,0.2);
+    }
+    .form-submit:hover { opacity: 0.88; transform: translateY(-2px); }
+    .form-note { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 0.75rem; }
+
+    /* ──── FOOTER ──── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 6vw;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--white); }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-socials { display: flex; gap: 0.75rem; }
+    .footer-social {
+      width: 34px; height: 34px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.85rem; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .footer-social:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ──── ANIMATIONS ──── */
+    .fade-up {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ──── RESPONSIVE ──── */
+    @media (max-width: 900px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .about-illus { max-width: 400px; margin: 0 auto; }
+      .work-intro { grid-template-columns: 1fr; gap: 1.5rem; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    }
+    @media (max-width: 680px) {
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 4rem 5vw; }
+      .form-2col { grid-template-columns: 1fr; }
+      .hero-scroll { display: none; }
+      .stats-row { gap: 2rem; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">daksh<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Process</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Talk</a>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#about" class="mm-link">About</a>
+  <a href="#work" class="mm-link">Process</a>
+  <a href="#services" class="mm-link">Services</a>
+  <a href="#contact" class="mm-link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-badge"><span class="dot"></span> Open to new projects</div>
+  <h1 class="hero-headline">
+    I build websites<br />
+    <span class="line2">that actually work.</span>
+  </h1>
+  <p class="hero-tagline">Freelance web developer crafting clean, fast, and purposeful digital experiences for businesses, creators, and brands.</p>
+  <div class="hero-actions">
+    <a href="#services" class="btn-primary">See What I Build ↓</a>
+    <a href="#contact" class="btn-ghost">Start a Project</a>
+  </div>
+  <div class="stats-row">
+    <div class="stat-item fade-up"><div class="num">20<span>+</span></div><div class="desc">Projects Delivered</div></div>
+    <div class="stat-item fade-up" style="transition-delay:0.1s"><div class="num">3<span>+</span></div><div class="desc">Years Experience</div></div>
+    <div class="stat-item fade-up" style="transition-delay:0.2s"><div class="num">100<span>%</span></div><div class="desc">Client Satisfaction</div></div>
+  </div>
+  <div class="hero-scroll"><div class="hero-scroll-line"></div> Scroll to explore</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-illus">
+      <svg viewBox="0 0 480 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- glow behind browser -->
+        <ellipse cx="240" cy="280" rx="200" ry="160" fill="url(#glowGrad)" opacity="0.35"/>
+        <defs>
+          <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c8f542" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#c8f542" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- ── BROWSER WINDOW ── -->
+        <!-- shadow -->
+        <rect x="48" y="68" width="384" height="290" rx="14" fill="#000" opacity="0.45"/>
+        <!-- body -->
+        <rect x="44" y="64" width="384" height="290" rx="14" fill="#18181e" stroke="#2a2a35" stroke-width="1"/>
+        <!-- titlebar -->
+        <rect x="44" y="64" width="384" height="38" rx="14" fill="#1e1e26"/>
+        <rect x="44" y="88" width="384" height="14" fill="#1e1e26"/>
+        <!-- dots -->
+        <circle cx="72" cy="83" r="5" fill="#ff5f57"/>
+        <circle cx="89" cy="83" r="5" fill="#febc2e"/>
+        <circle cx="106" cy="83" r="5" fill="#28c840"/>
+        <!-- url bar -->
+        <rect x="128" y="74" width="220" height="18" rx="9" fill="#111115" stroke="#2a2a35" stroke-width="0.8"/>
+        <text x="238" y="87" font-family="'DM Sans',sans-serif" font-size="9" fill="#555560" text-anchor="middle">yourwebsite.com</text>
+
+        <!-- ── WEBPAGE CONTENT INSIDE BROWSER ── -->
+        <!-- hero strip -->
+        <rect x="60" y="115" width="352" height="70" rx="6" fill="#111115"/>
+        <!-- hero headline bars (animated width) -->
+        <rect x="80" y="130" width="180" height="10" rx="4" fill="#c8f542" opacity="0.9">
+          <animate attributeName="width" from="0" to="180" dur="1.2s" fill="freeze" begin="0.3s"/>
+        </rect>
+        <rect x="80" y="146" width="120" height="7" rx="3" fill="#3a3a48">
+          <animate attributeName="width" from="0" to="120" dur="1s" fill="freeze" begin="0.7s"/>
+        </rect>
+        <rect x="80" y="159" width="80" height="7" rx="3" fill="#3a3a48">
+          <animate attributeName="width" from="0" to="80" dur="0.8s" fill="freeze" begin="1s"/>
+        </rect>
+        <!-- CTA button inside mock -->
+        <rect x="80" y="172" width="54" height="12" rx="6" fill="#c8f542">
+          <animate attributeName="opacity" from="0" to="1" dur="0.4s" fill="freeze" begin="1.4s"/>
+        </rect>
+
+        <!-- card row -->
+        <rect x="60" y="195" width="108" height="80" rx="6" fill="#1e1e28" stroke="#2a2a35" stroke-width="0.8"/>
+        <rect x="178" y="195" width="108" height="80" rx="6" fill="#1e1e28" stroke="#2a2a35" stroke-width="0.8"/>
+        <rect x="296" y="195" width="116" height="80" rx="6" fill="#1e1e28" stroke="#2a2a35" stroke-width="0.8"/>
+        <!-- card icon placeholders -->
+        <rect x="74" y="207" width="24" height="24" rx="5" fill="#c8f542" opacity="0.15"/>
+        <rect x="192" y="207" width="24" height="24" rx="5" fill="#3dffd0" opacity="0.15"/>
+        <rect x="310" y="207" width="24" height="24" rx="5" fill="#c8f542" opacity="0.15"/>
+        <!-- card text lines -->
+        <rect x="74" y="237" width="70" height="5" rx="2" fill="#3a3a48"/>
+        <rect x="74" y="248" width="50" height="5" rx="2" fill="#2a2a38"/>
+        <rect x="192" y="237" width="70" height="5" rx="2" fill="#3a3a48"/>
+        <rect x="192" y="248" width="50" height="5" rx="2" fill="#2a2a38"/>
+        <rect x="310" y="237" width="70" height="5" rx="2" fill="#3a3a48"/>
+        <rect x="310" y="248" width="50" height="5" rx="2" fill="#2a2a38"/>
+
+        <!-- progress/loading bar at bottom of browser -->
+        <rect x="60" y="284" width="352" height="4" rx="2" fill="#111115"/>
+        <rect x="60" y="284" width="352" height="4" rx="2" fill="#c8f542" opacity="0.7">
+          <animate attributeName="width" values="0;352;352" dur="2.5s" fill="freeze" begin="0.2s"/>
+        </rect>
+
+        <!-- "Live" badge on browser -->
+        <g class="badge-float-c">
+          <rect x="350" y="52" width="52" height="22" rx="11" fill="#c8f542"/>
+          <circle cx="365" cy="63" r="4" fill="#0b0b0d"/>
+          <circle cx="365" cy="63" r="2" fill="#0b0b0d">
+            <animate attributeName="r" values="2;4;2" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="fill" values="#0b0b0d;#c8f542;#0b0b0d" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <text x="374" y="67" font-family="'Syne',sans-serif" font-size="9" font-weight="700" fill="#0b0b0d">LIVE</text>
+        </g>
+
+        <!-- ── FLOATING STAT CARD — top left ── -->
+        <g class="badge-float-a">
+          <rect x="10" y="100" width="130" height="60" rx="10" fill="#18181e" stroke="#2a2a35" stroke-width="1"/>
+          <rect x="10" y="100" width="130" height="60" rx="10" fill="#c8f542" opacity="0.04"/>
+          <!-- accent bar left -->
+          <rect x="10" y="110" width="3" height="40" rx="2" fill="#c8f542"/>
+          <text x="26" y="122" font-family="'DM Sans',sans-serif" font-size="9" fill="#7a7a88">New visitors today</text>
+          <text x="26" y="140" font-family="'Syne',sans-serif" font-size="18" font-weight="800" fill="#e8e8ea">+248</text>
+          <text x="26" y="153" font-family="'DM Sans',sans-serif" font-size="8" fill="#c8f542">↑ 34% vs yesterday</text>
+        </g>
+
+        <!-- ── FLOATING CARD — bottom right (order/enquiry) ── -->
+        <g class="badge-float-b">
+          <rect x="330" y="365" width="145" height="72" rx="10" fill="#18181e" stroke="#2a2a35" stroke-width="1"/>
+          <!-- small avatar -->
+          <circle cx="351" cy="392" r="13" fill="#1e1e28" stroke="#c8f542" stroke-width="1.2"/>
+          <circle cx="351" cy="388" r="5" fill="#c8f542" opacity="0.5"/>
+          <path d="M342 401 Q351 396 360 401" stroke="#c8f542" stroke-width="1.2" fill="none" opacity="0.5"/>
+          <text x="371" y="387" font-family="'DM Sans',sans-serif" font-size="9" fill="#e8e8ea" font-weight="500">New enquiry!</text>
+          <text x="371" y="399" font-family="'DM Sans',sans-serif" font-size="8" fill="#7a7a88">Someone wants your</text>
+          <text x="371" y="410" font-family="'DM Sans',sans-serif" font-size="8" fill="#7a7a88">service 🎉</text>
+          <rect x="369" y="416" width="90" height="12" rx="6" fill="#c8f542"/>
+          <text x="414" y="425" font-family="'Syne',sans-serif" font-size="7" font-weight="700" fill="#0b0b0d" text-anchor="middle">View Message</text>
+        </g>
+
+        <!-- ── FLOATING CARD — bottom left (tools) ── -->
+        <g class="badge-float-a" style="animation-delay:2s">
+          <rect x="14" y="370" width="140" height="68" rx="10" fill="#18181e" stroke="#2a2a35" stroke-width="1"/>
+          <text x="30" y="392" font-family="'DM Sans',sans-serif" font-size="9" fill="#7a7a88">Built with</text>
+          <!-- tech pill row -->
+          <rect x="28" y="398" width="32" height="14" rx="7" fill="#1e1e28" stroke="#2a2a35" stroke-width="0.8"/>
+          <text x="44" y="408" font-family="'DM Sans',sans-serif" font-size="7.5" fill="#e8e8ea" text-anchor="middle">HTML</text>
+          <rect x="65" y="398" width="28" height="14" rx="7" fill="#1e1e28" stroke="#2a2a35" stroke-width="0.8"/>
+          <text x="79" y="408" font-family="'DM Sans',sans-serif" font-size="7.5" fill="#3dffd0" text-anchor="middle">CSS</text>
+          <rect x="98" y="398" width="28" height="14" rx="7" fill="#1e1e28" stroke="#c8f542" stroke-width="0.8"/>
+          <text x="112" y="408" font-family="'DM Sans',sans-serif" font-size="7.5" fill="#c8f542" text-anchor="middle">JS</text>
+          <!-- speed bar -->
+          <text x="30" y="427" font-family="'DM Sans',sans-serif" font-size="8" fill="#7a7a88">Page speed</text>
+          <rect x="28" y="430" width="110" height="5" rx="2" fill="#111115"/>
+          <rect x="28" y="430" width="96" height="5" rx="2" fill="#c8f542" opacity="0.8"/>
+          <text x="143" y="435" font-family="'Syne',sans-serif" font-size="8" font-weight="700" fill="#c8f542" text-anchor="end">98</text>
+        </g>
+
+        <!-- ── CURSOR with typing glow ── -->
+        <g>
+          <circle cx="246" cy="162" r="6" fill="none" stroke="#c8f542" stroke-width="1.2" opacity="0.6"/>
+          <circle cx="246" cy="162" r="2" fill="#c8f542"/>
+          <line x1="246" y1="156" x2="246" y2="162" stroke="#c8f542" stroke-width="1"/>
+          <line x1="252" y1="162" x2="246" y2="162" stroke="#c8f542" stroke-width="1"/>
+        </g>
+
+        <!-- ── DECORATIVE DOTS grid ── -->
+        <g opacity="0.18">
+          <circle cx="456" cy="120" r="2" fill="#c8f542"/>
+          <circle cx="466" cy="120" r="2" fill="#c8f542"/>
+          <circle cx="456" cy="130" r="2" fill="#c8f542"/>
+          <circle cx="466" cy="130" r="2" fill="#c8f542"/>
+          <circle cx="456" cy="140" r="2" fill="#c8f542"/>
+          <circle cx="466" cy="140" r="2" fill="#c8f542"/>
+          <circle cx="456" cy="150" r="2" fill="#c8f542"/>
+          <circle cx="466" cy="150" r="2" fill="#c8f542"/>
+        </g>
+        <g opacity="0.12">
+          <circle cx="10" cy="300" r="2" fill="#3dffd0"/>
+          <circle cx="20" cy="300" r="2" fill="#3dffd0"/>
+          <circle cx="10" cy="310" r="2" fill="#3dffd0"/>
+          <circle cx="20" cy="310" r="2" fill="#3dffd0"/>
+          <circle cx="10" cy="320" r="2" fill="#3dffd0"/>
+          <circle cx="20" cy="320" r="2" fill="#3dffd0"/>
+        </g>
+
+        <!-- ── TAGLINE at bottom ── -->
+        <text x="240" y="510" font-family="'DM Sans',sans-serif" font-size="11" fill="#555560" text-anchor="middle">This could be your website — built for you.</text>
+      </svg>
+    </div>
+    <div>
+      <div class="label">About Me</div>
+      <h2 class="about-heading fade-up">Hey, I'm Daksh.<br />A dev who keeps it simple.</h2>
+      <p class="about-text fade-up">I'm a freelance web developer who turns ideas into real, working websites. Whether you're a business owner, a creator, or someone who just needs an online presence — I've got you covered.</p>
+      <p class="about-text fade-up">I focus on making things that look great, load fast, and are actually easy for people to use. No unnecessary complexity, no jargon — just clean, effective websites.</p>
+      <div class="skill-chips fade-up">
+        <span class="chip">HTML & CSS</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">React</span>
+        <span class="chip">Responsive Design</span>
+        <span class="chip">WordPress</span>
+        <span class="chip">Figma</span>
+        <span class="chip">SEO Basics</span>
+        <span class="chip">Performance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW I WORK -->
+<section id="work">
+  <div class="work-intro">
+    <div>
+      <div class="label">How It Works</div>
+      <h2 class="work-heading fade-up">My process,<br />plain and simple.</h2>
+    </div>
+    <p class="work-sub fade-up">Building a website with me is straightforward. You don't need to know any tech — I handle all of that. Here's what happens from the moment you reach out.</p>
+  </div>
+  <div class="process-steps">
+    <div class="step-card fade-up">
+      <div class="step-num">01</div>
+      <div class="step-title">We Chat</div>
+      <p class="step-desc">You tell me what you need — I listen. We figure out the goal, the look, and the deadline together. No forms, no complexity.</p>
+    </div>
+    <div class="step-card fade-up" style="transition-delay:0.08s">
+      <div class="step-num">02</div>
+      <div class="step-title">I Design</div>
+      <p class="step-desc">I put together a visual plan for how your site will look. You review it, give feedback, and we tweak until it feels right.</p>
+    </div>
+    <div class="step-card fade-up" style="transition-delay:0.16s">
+      <div class="step-num">03</div>
+      <div class="step-title">I Build</div>
+      <p class="step-desc">I write clean, fast code and bring the design to life. You can follow the progress at every step — no black boxes.</p>
+    </div>
+    <div class="step-card fade-up" style="transition-delay:0.24s">
+      <div class="step-num">04</div>
+      <div class="step-title">We Launch</div>
+      <p class="step-desc">Your site goes live. I test everything across devices and browsers so it works perfectly for every visitor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES + SITE TYPES -->
+<section id="services">
+  <div class="label">What I Build & Who It's For</div>
+  <h2 class="services-heading fade-up">A website for<br />every kind of goal.</h2>
+  <p class="services-sub fade-up">A website is the most powerful tool you can have online. Here's who benefits — and how.</p>
+
+  <!-- Who section -->
+  <div class="who-grid">
+    <div class="who-card fade-up">
+      <div class="who-icon">🏪</div>
+      <div class="who-title">Business Owners</div>
+      <p class="who-desc">Whether you run a shop, a restaurant, a clinic, or a startup — your website is your 24/7 salesperson. It tells people who you are, what you offer, and how to reach you.</p>
+      <span class="who-tag">→ Get found. Get customers.</span>
+    </div>
+    <div class="who-card fade-up" style="transition-delay:0.08s">
+      <div class="who-icon">🎨</div>
+      <div class="who-title">Creators & Artists</div>
+      <p class="who-desc">Photographers, designers, illustrators, musicians — your work deserves a home that's as beautiful as what you create. Show your portfolio, your story, and your contact info in one place.</p>
+      <span class="who-tag">→ Stand out. Get hired.</span>
+    </div>
+    <div class="who-card fade-up" style="transition-delay:0.16s">
+      <div class="who-icon">💼</div>
+      <div class="who-title">Freelancers & Professionals</div>
+      <p class="who-desc">Consultants, coaches, lawyers, developers — a personal website builds trust instantly. Clients want to see your expertise before they reach out. Give them that confidence.</p>
+      <span class="who-tag">→ Look credible. Win clients.</span>
+    </div>
+    <div class="who-card fade-up" style="transition-delay:0.24s">
+      <div class="who-icon">🎓</div>
+      <div class="who-title">Students & Job Seekers</div>
+      <p class="who-desc">Stand out from the stack of resumes. A personal website shows your projects, skills, and personality in a way a PDF never can. It's your digital resume — but way better.</p>
+      <span class="who-tag">→ Impress recruiters. Get jobs.</span>
+    </div>
+    <div class="who-card fade-up" style="transition-delay:0.32s">
+      <div class="who-icon">✍️</div>
+      <div class="who-title">Bloggers & Content Creators</div>
+      <p class="who-desc">If you write, vlog, podcast, or share content — your own website means you own your audience. No algorithm decides who sees your work.</p>
+      <span class="who-tag">→ Own your platform.</span>
+    </div>
+    <div class="who-card fade-up" style="transition-delay:0.40s">
+      <div class="who-icon">🏫</div>
+      <div class="who-title">NGOs & Communities</div>
+      <p class="who-desc">Non-profits, clubs, local organisations — a website makes you look credible, helps you reach more people, and makes it easy for supporters to find and donate.</p>
+      <span class="who-tag">→ Reach more people.</span>
+    </div>
+  </div>
+
+  <!-- Types of sites I build -->
+  <div class="label types-label">Types of Websites I Build</div>
+  <div class="types-grid">
+    <!-- Landing Page -->
+    <div class="type-card fade-up">
+      <div class="type-visual tv-landing">
+        <div class="mock">
+          <div class="mock-bar"></div>
+          <div class="mock-bar sm"></div>
+          <div class="mock-bar sm" style="width:40%"></div>
+          <div class="mock-btn"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Landing Pages</div>
+        <p class="type-desc">One focused page to promote a product, service, or offer. Built to convert visitors into leads or customers.</p>
+      </div>
+    </div>
+    <!-- Portfolio -->
+    <div class="type-card fade-up" style="transition-delay:0.08s">
+      <div class="type-visual tv-portfolio">
+        <div class="grid-mock">
+          <div class="gm-cell"></div>
+          <div class="gm-cell"></div>
+          <div class="gm-cell"></div>
+          <div class="gm-cell"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Portfolio Sites</div>
+        <p class="type-desc">Showcase your best work beautifully. Perfect for designers, photographers, developers, and artists.</p>
+      </div>
+    </div>
+    <!-- Blog -->
+    <div class="type-card fade-up" style="transition-delay:0.16s">
+      <div class="type-visual tv-blog">
+        <div class="blog-mock">
+          <div class="bm-row accent"></div>
+          <div class="bm-img"></div>
+          <div class="bm-row" style="width:80%"></div>
+          <div class="bm-row" style="width:60%"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Blog & Content Sites</div>
+        <p class="type-desc">Share your thoughts, ideas, and expertise. Build an audience that comes back to you — not to a platform.</p>
+      </div>
+    </div>
+    <!-- E-commerce -->
+    <div class="type-card fade-up" style="transition-delay:0.24s">
+      <div class="type-visual tv-ecomm">
+        <div class="shop-mock">
+          <div class="sm-card"></div>
+          <div class="sm-card"></div>
+          <div class="sm-card"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Online Stores</div>
+        <p class="type-desc">Sell your products online with a clean, easy-to-use shop — complete with payments, cart, and order flow.</p>
+      </div>
+    </div>
+    <!-- Service/Business -->
+    <div class="type-card fade-up" style="transition-delay:0.32s">
+      <div class="type-visual tv-service">
+        <div class="svc-mock">
+          <div class="svc-icon-row">
+            <div class="svc-icon"></div>
+            <div class="svc-icon"></div>
+            <div class="svc-icon"></div>
+          </div>
+          <div class="svc-bar g"></div>
+          <div class="svc-bar" style="width:50%"></div>
+          <div class="svc-bar" style="width:80%"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Business Websites</div>
+        <p class="type-desc">A complete web presence for your company — who you are, what you do, and how to get in touch.</p>
+      </div>
+    </div>
+    <!-- Booking -->
+    <div class="type-card fade-up" style="transition-delay:0.40s">
+      <div class="type-visual tv-booking">
+        <div class="cal-mock">
+          <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day on"></div>
+          <div class="cal-day"></div><div class="cal-day sel"></div><div class="cal-day on"></div>
+          <div class="cal-day"></div><div class="cal-day on"></div><div class="cal-day"></div>
+          <div class="cal-day"></div><div class="cal-day"></div><div class="cal-day on"></div>
+          <div class="cal-day on"></div><div class="cal-day"></div>
+        </div>
+      </div>
+      <div class="type-info">
+        <div class="type-name">Booking & Appointment Sites</div>
+        <p class="type-desc">Let clients book your time online. Great for coaches, salons, clinics, and consultants.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-grid">
+    <div>
+      <div class="label">Contact</div>
+      <h2 class="contact-heading fade-up">Got a project in mind? Let's make it happen.</h2>
+      <p class="contact-text fade-up">Tell me about your idea — even if it's just a rough thought. I'll help you figure out the best approach and give you a clear estimate.</p>
+      <div class="contact-links fade-up">
+        <a href="mailto:daksh@email.com" class="contact-link">
+          <div class="contact-link-icon">✉️</div>
+          daksh@email.com
+        </a>
+        <a href="https://twitter.com" class="contact-link" target="_blank">
+          <div class="contact-link-icon">𝕏</div>
+          @daksh_dev
+        </a>
+        <a href="https://linkedin.com" class="contact-link" target="_blank">
+          <div class="contact-link-icon">in</div>
+          linkedin.com/in/daksh
+        </a>
+      </div>
+    </div>
+    <div class="form-wrap fade-up">
+      <div class="form-2col">
+        <div class="form-row">
+          <label>Your Name</label>
+          <input type="text" placeholder="e.g. Priya Sharma" />
+        </div>
+        <div class="form-row">
+          <label>Email Address</label>
+          <input type="email" placeholder="you@email.com" />
+        </div>
+      </div>
+      <div class="form-row">
+        <label>What do you need?</label>
+        <select>
+          <option value="" disabled selected>Select a website type</option>
+          <option>Landing Page</option>
+          <option>Portfolio Site</option>
+          <option>Business Website</option>
+          <option>Online Store</option>
+          <option>Blog</option>
+          <option>Booking Site</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Tell me about your project</label>
+        <textarea placeholder="What's your idea? Who's your audience? What's your timeline?"></textarea>
+      </div>
+      <button class="form-submit">Send Message →</button>
+      <p class="form-note">I usually respond within 24 hours. No spam, ever.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">daksh<span>.</span></div>
+  <p class="footer-copy">© 2025 Daksh. Built with care.</p>
+  <div class="footer-socials">
+    <a href="#" class="footer-social">𝕏</a>
+    <a href="#" class="footer-social">in</a>
+    <a href="#" class="footer-social">gh</a>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  document.querySelectorAll('.mm-link').forEach(l => {
+    l.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  });
+
+  // Scroll animations
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
